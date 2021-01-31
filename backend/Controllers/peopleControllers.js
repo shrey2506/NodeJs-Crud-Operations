@@ -1,56 +1,58 @@
-const PeopleModel =require('../Models/people')
+const BlogModel =require('../Models/people')
 const slugify = require('slugify')
+const fs=require('fs')
+const formidable=require('formidable')
 
 exports.time=(req,res)=>{
     res.json({time: Date().toString()})
 }
 
-exports.createPerson=(req,res)=>{
-    // const {userId, personName} =req.body;
+exports.createBlog=(req,res)=>{
+
     
-    // res.json({
-    //     person: {userId, personName}
-    // });
 
-    PeopleModel.findOne({userId: req.body.userId}).exec((err, user)=>{
-        if(user){
-            return res.status(400).json({
-                error: 'UserId already exists'
-            })
-        }
+        
 
-        const {userId, personName}=req.body
-        
-        
-        
-        let newUser=new PeopleModel({userId, personName})
-        newUser.slug=slugify(userId)
-        newUser.save((err, success)=>{
-            if(err){
+         BlogModel.findOne({userId: req.body.blogId}).exec((err, user)=>{
+            if(user){
                 return res.status(400).json({
-                    error: err
+                    error: 'Blog already exists'
                 })
             }
 
-            res.json({
-                user: success
-            })
+            const {blogId,blogTitle,content, Date,}=req.body
 
-            // return res.json({
-            //     message: 'User added successfully'
-            // })
+            let newBlog=new BlogModel({blogId,blogTitle,content,Date})
+            newBlog.slug=slugify(blogId)
+            
+    
+            newBlog.save((err, success)=>{
+                if(err){
+                    return res.status(400).json({
+                        error: err
+                    })
+                }
+    
+                res.json({
+                    user: success
+                })
+    
+               
+            })
+    
+           
         })
-    })
    
+
 }
 
-exports.getPeople=(req,res)=>{
-    PeopleModel.find({})
+exports.getBlogs=(req,res)=>{
+    BlogModel.find({})
        
         .exec((err,data)=>{
             if(err){
                 return res.json({
-                    error: 'No data of people found'
+                    error: 'No data of the blogs found'
                 })
             }
 
@@ -58,13 +60,13 @@ exports.getPeople=(req,res)=>{
         })
 }
 
-exports.getPerson=(req,res)=>{
+exports.getSingleBlog=(req,res)=>{
     const slug=req.params.slug
-    PeopleModel.findOne({slug})
+    BlogModel.findOne({slug})
       .exec((err,user)=>{
           if(err){
               return res.json({
-                  error: 'User Not Found'
+                  error: 'Blog not found'
               })
           }
 
@@ -72,9 +74,9 @@ exports.getPerson=(req,res)=>{
       })
 }
 
-exports.deletePerson=(req,res)=>{
+exports.deleteBlog=(req,res)=>{
     const slug=req.params.slug
-    PeopleModel.findOneAndRemove({slug})
+    BlogModel.findOneAndRemove({slug})
        .exec((err,data)=>{
            if(err){
                return res.json({
@@ -88,9 +90,9 @@ exports.deletePerson=(req,res)=>{
        })
 }
 
-exports.updatePerson=(req,res)=>{
+exports.updateBlog=(req,res)=>{
     const slug=req.params.slug
-    PeopleModel.findOne({slug})
+    BlogModel.findOne({slug})
        .exec((err,data)=>{
         if(err){
             return res.json({
@@ -98,9 +100,10 @@ exports.updatePerson=(req,res)=>{
             })
         }
         // res.json(data)
-        const {personName}=req.body
+        const {blogTitle,content}=req.body
         
-        data.personName=personName
+        data.blogTitle=blogTitle,
+        data.content=content,
         data.save((err,success)=>{
             if(err){
                 return res.status(400).json({
@@ -109,7 +112,7 @@ exports.updatePerson=(req,res)=>{
             }
 
             res.json({
-                user: success
+                blog: success
             })
         })
 

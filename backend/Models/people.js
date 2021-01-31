@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const crypto=require('crypto')
 
-const peopleSchema=new mongoose.Schema({
-    personName:{
+const blogSchema=new mongoose.Schema({
+    blogTitle:{
         type: String,
         trim: true,
         required:true,
@@ -10,11 +10,30 @@ const peopleSchema=new mongoose.Schema({
         index: true
     },
 
-    userId: {
+    blogId:{
+        type: String,
+        maxLength: 3,
+        required:true,
+        
+        index: true
+    },
+
+    content: {
         type: String,
         required: true,
         unique: true,
-        maxlength: 3
+        maxlength: 100
+    },
+
+    Date: {
+        type: String,
+        required: true
+        
+    },
+
+    mediaFile: {
+        data: Buffer,
+        contentType: String
     },
 
     slug: {
@@ -24,4 +43,4 @@ const peopleSchema=new mongoose.Schema({
     },
 }, {timestamp: true})
 
-module.exports=mongoose.model('People',peopleSchema)
+module.exports=mongoose.model('Blogs',blogSchema)
